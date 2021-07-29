@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KnockoutjsWithMVC.Context;
 using KnockoutjsWithMVC.Models;
+using Nancy.Json;
 
 namespace KnockoutjsWithMVC.Controllers
 {
@@ -78,6 +79,8 @@ namespace KnockoutjsWithMVC.Controllers
             {
                 return NotFound();
             }
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            ViewBag.InitialData = serializer.Serialize(student);
             return View(student);
         }
 
@@ -130,7 +133,8 @@ namespace KnockoutjsWithMVC.Controllers
             {
                 return NotFound();
             }
-
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            ViewBag.InitialData = serializer.Serialize(student);
             return View(student);
         }
 

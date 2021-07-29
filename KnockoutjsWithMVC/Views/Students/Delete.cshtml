@@ -11,66 +11,122 @@
 <div>
     <h4>Student</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Age)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Age)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gender)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Batch)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Batch)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Class)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Class)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.School)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.School)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Decimal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Decimal)
-        </dd>
-    </dl>
-    
+
+    <fieldset>
+        <legend>Delete</legend>
+        <div class="display-label">
+            Student Id
+        </div>
+        <div class="display-field">
+            <input data-bind="value: StudentId" />
+        </div>
+        <div class="display-label">
+            First Name
+        </div>
+        <div class="display-field">
+            <input data-bind="value: FirstName" />
+        </div>
+        <div class="display-label">
+            Last Name
+        </div>
+        <div class="display-field">
+            <input data-bind="value: LastName" />
+        </div>
+        <div class="display-label">
+            Age
+        </div>
+        <div class="display-field">
+            <input data-bind="value: Age" />
+        </div>
+        <div class="display-label">
+            Gender
+        </div>
+        <div class="display-field">
+            <input data-bind="value: Gender" />
+        </div>
+        <div class="display-label">
+            Batch
+        </div>
+        <div class="display-field">
+            <input data-bind="value: Batch" />
+        </div>
+        <div class="display-label">
+            Address
+        </div>
+        <div class="display-field">
+            <input data-bind="value: Address" />
+        </div>
+        <div class="display-label">
+            Class
+        </div>
+        <div class="display-field">
+            <input data-bind="value: Class" />
+        </div>
+        <div class="display-label">
+            School
+        </div>
+        <div class="display-field">
+            <input data-bind="value: School" />
+        </div>
+        <div class="display-label">
+            Domicile
+        </div>
+        <div class="display-field">
+            <input data-bind="value: Domicile" />
+        </div>
+    </fieldset>
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="StudentId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
 </div>
+
+@section Scripts {
+    <script>
+
+    $(function () {
+        ko.applyBindings(DeleteVM);
+    });
+    var initialData = '@Html.Raw(ViewBag.InitialData)'; //get the raw json
+    var parsedJSON = $.parseJSON(initialData); //parse the json client side
+    var DeleteVM = {
+        Domiciles: ko.observableArray(['Delhi', 'Outside Delhi']),
+        Genders: ko.observableArray(['Male', 'Female']),
+        Students: ko.observableArray([]),
+        StudentId: ko.observable(parsedJSON.StudentId),
+        FirstName: ko.observable(parsedJSON.FirstName),
+        LastName: ko.observable(parsedJSON.LastName),
+        Age: ko.observable(parsedJSON.Age),
+        Batch: ko.observable(parsedJSON.Batch),
+        Address: ko.observable(parsedJSON.Address),
+        Class: ko.observable(parsedJSON.Class),
+        School: ko.observable(parsedJSON.School),
+        Domicile: ko.observable(parsedJSON.Domicile),
+        Gender: ko.observable(parsedJSON.Gender),
+        DeleteStudent: function () {
+            $.ajax({
+                url: '/Student/Delete',
+                type: 'post',
+                dataType: 'json',
+                data: ko.toJSON(this),
+                contentType: 'application/json',
+                success: function (result) {
+                },
+                error: function (err) {
+                    if (err.responseText == "Creation Failed")
+                    { window.location.href = '/Student/Index/'; }
+                    else {
+                        alert("Status:" + err.responseText);
+                        window.location.href = '/Student/Index/'; ;
+                    }
+                },
+                complete: function () {
+                    window.location.href = '/Student/Index/';
+                }
+            });
+        }
+    };
+    </script>
+}

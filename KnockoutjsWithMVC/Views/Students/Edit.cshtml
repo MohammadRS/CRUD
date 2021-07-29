@@ -16,51 +16,53 @@
             <input type="hidden" asp-for="StudentId" />
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
+                <input data-bind="value: FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
+                <input data-bind="value: LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Age" class="control-label"></label>
-                <input asp-for="Age" class="form-control" />
+                <input data-bind="value: Age" class="form-control" />
                 <span asp-validation-for="Age" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
+                <input  bind="options: Genders, value: Gender, optionsCaption: 'Select Gender...'" class="form-control" />
                 <span asp-validation-for="Gender" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Batch" class="control-label"></label>
-                <input asp-for="Batch" class="form-control" />
+                <input data-bind="value: Batch" class="form-control" />
                 <span asp-validation-for="Batch" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
+                <input data-bind="value: Address" class="form-control" />
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Class" class="control-label"></label>
-                <input asp-for="Class" class="form-control" />
+                <input data-bind="value: Class" class="form-control" />
                 <span asp-validation-for="Class" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="School" class="control-label"></label>
-                <input asp-for="School" class="form-control" />
+                <input data-bind="value: School" class="form-control" />
                 <span asp-validation-for="School" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Decimal" class="control-label"></label>
-                <input asp-for="Decimal" class="form-control" />
+                <input  data-bind="value: Decimal" class="form-control" />
                 <span asp-validation-for="Decimal" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <button type="button" data-bind="click: SaveStudent">
+                    Save Student To Database
+                </button>
             </div>
         </form>
     </div>
@@ -71,5 +73,49 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+
+               $(function () {
+    ko.applyBindings(EditVM);
+});
+    var initialData = '@Html.Raw(ViewBag.InitialData)'; //get the raw json
+    var parsedJSON = $.parseJSON(initialData); //parse the json client side
+    var EditVM = {
+        Domiciles: ko.observableArray(['Delhi', 'Outside Delhi']),
+        Genders: ko.observableArray(['Male', 'Female']),
+        Students: ko.observableArray([]),
+        StudentId: ko.observable(parsedJSON.StudentId),
+        FirstName: ko.observable(parsedJSON.FirstName),
+        LastName: ko.observable(parsedJSON.LastName),
+        Age: ko.observable(parsedJSON.Age),
+        Batch: ko.observable(parsedJSON.Batch),
+        Address: ko.observable(parsedJSON.Address),
+        Class: ko.observable(parsedJSON.Class),
+        School: ko.observable(parsedJSON.School),
+        Domicile: ko.observable(parsedJSON.Domicile),
+        Gender: ko.observable(parsedJSON.Gender),
+        SaveStudent: function () {
+            $.ajax({
+                url: '/Student/Edit',
+                type: 'post',
+                dataType: 'json',
+                data: ko.toJSON(this),
+                contentType: 'application/json',
+                success: function (result) {
+                },
+                error: function (err) {
+                    if (err.responseText == "Creation Failed")
+                    { window.location.href = '/Student/Index/'; }
+                    else {
+                        alert("Status:" + err.responseText);
+                        window.location.href = '/Student/Index/'; ;
+                    }
+                },
+                complete: function () {
+                    window.location.href = '/Student/Index/';
+                }
+            });
+        }
+    };
+    </script>
 }
